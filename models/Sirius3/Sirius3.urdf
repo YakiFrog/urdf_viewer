@@ -75,11 +75,15 @@
         <parent link="base_link" />
         <child link="left_wheel" />
         <axis xyz="0.0 0.0 1.0" />
+        <limit effort="100" velocity="100" />
+        <dynamics damping="0.1" friction="0.1" />
     </joint>
     <joint name="right_wheel_joint" type="continuous">
         <origin xyz="-0.18100000000000002 -0.0014818300000000002 0.1325" rpy="-0.0 -1.5707963267948966 0" />
         <parent link="base_link" />
         <child link="right_wheel" />
         <axis xyz="0.0 0.0 1.0" />
+        <limit effort="100" velocity="100" />
+        <dynamics damping="0.1" friction="0.1" />
     </joint>
 </robot>
