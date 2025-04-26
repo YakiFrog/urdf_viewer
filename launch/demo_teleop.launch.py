@@ -30,13 +30,28 @@ def generate_launch_description():
         description='URDFモデルへの絶対パス'
     )
     
+    # rviz設定ファイルへのパス
+    rviz_config = os.path.join(pkg_dir, 'resource', 'rviz', 'urdf_config.rviz')
+    
     # robot_state_publisher
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         name='robot_state_publisher',
         parameters=[{'robot_description': Command(['cat ', LaunchConfiguration('model')]),
-                     'use_sim_time': True}],
+                     'use_sim_time': False}],  # use_sim_timeをFalseに変更
+        output='screen'
+    )
+    
+    # joint_state_publisherの設定を調整
+    joint_state_publisher_node = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        name='joint_state_publisher',
+        parameters=[{
+            'use_sim_time': False,  # use_sim_timeをFalseに変更
+            'rate': 30,  # 更新レートを上げる
+        }],
         output='screen'
     )
     
@@ -50,6 +65,8 @@ def generate_launch_description():
             '/model/Sirius3/pose@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V',
             '/model/Sirius3/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V',
             '/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist',
+            # joint_statesトピックのブリッジを追加
+            '/model/Sirius3/joint_state@sensor_msgs/msg/JointState@ignition.msgs.Model'
         ],
         output='screen'
     )
@@ -88,11 +105,23 @@ def generate_launch_description():
         prefix='xterm -e'  # 別ウィンドウでキーボード入力を受け付ける
     )
     
+    # Rviz2ノードを追加
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', rviz_config],
+        parameters=[{'use_sim_time': False}],  # use_sim_timeをFalseに変更
+        output='screen'
+    )
+
     return LaunchDescription([
         declare_model_arg,
         ignition_gazebo,
         robot_state_publisher_node,
+        joint_state_publisher_node,
         gz_bridge,
         spawn_robot,
         teleop_node,
+        rviz_node,
     ])
