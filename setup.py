@@ -16,6 +16,7 @@ setup(
         (os.path.join('share', package_name, 'resource/rviz'), glob('resource/rviz/*')),
         (os.path.join('share', package_name, 'urdf_viewer/urdf'), glob('urdf_viewer/urdf/*')),
         (os.path.join('share', package_name, 'urdf_viewer/models'), glob('urdf_viewer/models/*')),
+        # (os.path.join('share', package_name, 'models'), glob('models/**/*', recursive=True)),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,6 +27,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'teleop_keyboard = urdf_viewer.teleop_keyboard:main',
         ],
     },
 )
