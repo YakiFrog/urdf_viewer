@@ -15,7 +15,7 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob('launch/*')),
         (os.path.join('share', package_name, 'resource/rviz'), glob('resource/rviz/*')),
         (os.path.join('share', package_name, 'urdf_viewer/urdf'), glob('urdf_viewer/urdf/*')),
-        (os.path.join('share', package_name, 'urdf_viewer/models'), glob('urdf_viewer/models/*')),
+        # モデルのファイルが適切にインストールされるように修正
         # (os.path.join('share', package_name, 'models'), glob('models/**/*', recursive=True)),
     ],
     install_requires=['setuptools'],

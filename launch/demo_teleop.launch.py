@@ -15,7 +15,7 @@ def generate_launch_description():
     pkg_name = 'urdf_viewer'
     pkg_dir = get_package_share_directory(pkg_name)
     
-    # URDFファイルの絶対パス
+    # URDFファイルの絶対パス (パッケージ相対パスに変更)
     default_urdf_path = os.path.join(pkg_dir, 'models', 'Sirius3', 'Sirius3.urdf')
     
     # パスが存在するかログ出力
@@ -66,8 +66,17 @@ def generate_launch_description():
             '/model/Sirius3/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V',
             '/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist',
             # joint_statesトピックのブリッジを追加
-            '/model/Sirius3/joint_state@sensor_msgs/msg/JointState@ignition.msgs.Model'
+            '/model/Sirius3/joint_state@sensor_msgs/msg/JointState@ignition.msgs.Model',
+            # オドメトリのブリッジを追加し、適切な変換を設定
+            # '/model/Sirius3/odometry@nav_msgs/msg/Odometry@ignition.msgs.Odometry',
+            '/odom@nav_msgs/msg/Odometry@ignition.msgs.Odometry',
+            # TF情報を適切に変換するための設定を追加
+            '/tf@tf2_msgs/msg/TFMessage@ignition.msgs.Pose_V'
         ],
+        # remappings=[
+        #     # オドメトリトピックのマッピングを明示的に設定
+        #     ('/model/Sirius3/odometry', '/odom')
+        # ],
         output='screen'
     )
 
@@ -96,6 +105,33 @@ def generate_launch_description():
         }.items()
     )
     
+    # オドメトリからTFを生成するノード
+    # 静的な変換ではなく、動的なオドメトリ情報に基づいてTF変換を発行
+    robot_localization_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[{
+            'use_sim_time': False,
+            'frequency': 30.0,
+            'two_d_mode': True,
+            'publish_tf': True,
+            'map_frame': 'map',
+            'odom_frame': 'odom',
+            'base_link_frame': 'base_footprint',
+            'world_frame': 'odom',
+            'odom0': '/odom',
+            'odom0_config': [
+                True, True, False,  # x, y, z position
+                False, False, True,  # roll, pitch, yaw
+                True, True, False,  # vx, vy, vz
+                False, False, True,  # vroll, vpitch, vyaw
+                False, False, False  # ax, ay, az
+            ]
+        }]
+    )
+    
     # キーボード操作ノード
     teleop_node = Node(
         package='urdf_viewer',
@@ -122,6 +158,7 @@ def generate_launch_description():
         joint_state_publisher_node,
         gz_bridge,
         spawn_robot,
+        robot_localization_node,  # 静的TF変換の代わりに動的なTF変換を行うノードを使用
         teleop_node,
         rviz_node,
     ])
