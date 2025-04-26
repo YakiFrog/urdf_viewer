@@ -16,6 +16,9 @@
             <geometry>
                 <mesh filename="file:///home/kotantu-desktop/ros2_ws/src/urdf_viewer/models/Sirius3/meshes/Sirius3-body-v2.stl" scale="0.001 0.001 0.001" />
             </geometry>
+            <material name="base_blue">
+                <color rgba="0.1 0.3 0.6 1.0"/>
+            </material>
         </visual>
         <collision name="base_link_collision">
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
@@ -43,6 +46,9 @@
             <geometry>
                 <mesh filename="file:///home/kotantu-desktop/ros2_ws/src/urdf_viewer/models/Sirius3/meshes/Right-Wheel-v1.stl" scale="0.001 0.001 0.001" />
             </geometry>
+            <material name="wheel_gray">
+                <color rgba="0.3 0.3 0.3 1.0"/>
+            </material>
         </visual>
         <collision name="right_wheel_collision">
             <origin xyz="-0.00011675030934453545 0.00014720826142882893 -0.019999996185302748" rpy="-0.3490658503988659 1.5707963267948966 0" />
@@ -62,6 +68,9 @@
             <geometry>
                 <mesh filename="file:///home/kotantu-desktop/ros2_ws/src/urdf_viewer/models/Sirius3/meshes/Left-Wheel-v1.stl" scale="0.001 0.001 0.001" />
             </geometry>
+            <material name="wheel_gray">
+                <color rgba="0.3 0.3 0.3 1.0"/>
+            </material>
         </visual>
         <collision name="left_wheel_collision">
             <origin xyz="0.00026615125671387575 -0.0003525431147384645 -0.019999996185302748" rpy="-3.141592653589793 -1.5707963267948966 0" />
@@ -86,4 +95,40 @@
         <limit effort="100" velocity="100" />
         <dynamics damping="0.1" friction="0.1" />
     </joint>
+
+    <!-- Gazebo固有の色設定 -->
+    <gazebo reference="base_link">
+        <material>
+            <diffuse>0.1 0.3 0.6 1.0</diffuse>
+            <ambient>0.1 0.2 0.4 1.0</ambient>
+            <specular>0.2 0.4 0.8 1.0</specular>
+        </material>
+        <self_collide>false</self_collide>
+    </gazebo>
+
+    <gazebo reference="right_wheel">
+        <material>
+            <diffuse>0.3 0.3 0.3 1.0</diffuse>
+            <ambient>0.2 0.2 0.2 1.0</ambient>
+            <specular>0.15 0.15 0.15 1.0</specular>
+        </material>
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>500000.0</kp>
+        <kd>10.0</kd>
+        <self_collide>false</self_collide>
+    </gazebo>
+
+    <gazebo reference="left_wheel">
+        <material>
+            <diffuse>0.3 0.3 0.3 1.0</diffuse>
+            <ambient>0.2 0.2 0.2 1.0</ambient>
+            <specular>0.15 0.15 0.15 1.0</specular>
+        </material>
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>500000.0</kp>
+        <kd>10.0</kd>
+        <self_collide>false</self_collide>
+    </gazebo>
 </robot>
